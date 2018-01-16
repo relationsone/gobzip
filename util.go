@@ -9,8 +9,12 @@ import (
 )
 
 // use uuid to generate file name
-func tempFile(dir, prefix string) string {
+func tempFile(dir, prefix string) (string, error) {
 	fnv1a := fnv.New64a()
-	fnv1a.Write(uuid.NewV1().Bytes())
-	return filepath.Join(fmt.Sprintf("%s", dir), fmt.Sprintf("%s-%d", prefix, uint64(fnv1a.Sum64())))
+	id, err := uuid.NewV1()
+	if err != nil {
+		return "", err
+	}
+	fnv1a.Write(id.Bytes())
+	return filepath.Join(fmt.Sprintf("%s", dir), fmt.Sprintf("%s-%d", prefix, uint64(fnv1a.Sum64()))), nil
 }

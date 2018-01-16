@@ -93,9 +93,12 @@ func (b *BzipWriter) Close() error {
 }
 
 // bz2_bzWriteOpen wraps C.BZ2_bzWriteOpen
-func (b *BzipWriter) bz2_bzWriteOpen(blockSize int, verbosity int, workFactor int) error {
+func (b *BzipWriter) bz2_bzWriteOpen(blockSize int, verbosity int, workFactor int) (err error) {
 	// get a temp file for storing the bzip stream
-	b.tmpfile = tempFile(defaultDir, defaultPrefix)
+	b.tmpfile, err = tempFile(defaultDir, defaultPrefix)
+	if err != nil {
+		return err
+	}
 
 	filename := C.CString(b.tmpfile)
 	defer C.free(unsafe.Pointer(filename))
